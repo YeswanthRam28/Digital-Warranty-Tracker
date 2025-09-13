@@ -1,266 +1,174 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import {
   getWarranties,
   addWarranty,
   updateWarranty,
   deleteWarranty,
-} from "./services/api"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import "./index.css"
-import "./App.css"
+} from "./services/api";
+import { format, differenceInDays } from "date-fns";
+import "./App.css";
 
 function App() {
-  const [warranties, setWarranties] = useState([])
-  const [form, setForm] = useState({
+  const [warranties, setWarranties] = useState([]);
+  const [newWarranty, setNewWarranty] = useState({
     product_name: "",
     purchase_date: "",
     expiry_date: "",
     vendor: "",
-  })
-  const [editingId, setEditingId] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  });
+  const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    fetchWarranties()
-  }, [])
+    loadWarranties();
+  }, []);
 
-  const fetchWarranties = async () => {
-    try {
-      setLoading(true)
-      setError("")
-      const data = await getWarranties()
-      setWarranties(data)
-    } catch (err) {
-      console.error("Error fetching warranties:", err)
-      setError("❌ Failed to fetch warranties. Please try again.")
-    } finally {
-      setLoading(false)
+  const loadWarranties = async () => {
+    const data = await getWarranties();
+    setWarranties(data);
+  };
+
+  const handleAddOrUpdateWarranty = async () => {
+    if (editingId) {
+      await updateWarranty(editingId, newWarranty);
+    } else {
+      await addWarranty(newWarranty);
     }
-  }
+    setNewWarranty({ product_name: "", purchase_date: "", expiry_date: "", vendor: "" });
+    setEditingId(null);
+    loadWarranties();
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      if (editingId) {
-        await updateWarranty(editingId, form)
-        setEditingId(null)
-      } else {
-        await addWarranty(form)
-      }
-      setForm({
-        product_name: "",
-        purchase_date: "",
-        expiry_date: "",
-        vendor: "",
-      })
-      fetchWarranties()
-    } catch (err) {
-      console.error("Error saving warranty:", err)
-      setError("❌ Failed to save warranty.")
-    }
-  }
-
-  const handleEdit = (w) => {
-    setForm({
-      product_name: w.product_name,
-      purchase_date: w.purchase_date,
-      expiry_date: w.expiry_date,
-      vendor: w.vendor,
-    })
-    setEditingId(w.id)
-  }
+  const handleEdit = (warranty) => {
+    setNewWarranty({
+      product_name: warranty.product_name,
+      purchase_date: warranty.purchase_date,
+      expiry_date: warranty.expiry_date,
+      vendor: warranty.vendor,
+    });
+    setEditingId(warranty.id);
+  };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteWarranty(id)
-      fetchWarranties()
-    } catch (err) {
-      console.error("Error deleting warranty:", err)
-      setError("❌ Failed to delete warranty.")
-    }
-  }
+    await deleteWarranty(id);
+    loadWarranties();
+  };
+
+  const getExpiryStatus = (expiryDate) => {
+    const today = new Date();
+    const exp = new Date(expiryDate);
+    const daysLeft = differenceInDays(exp, today);
+
+    if (daysLeft < 0) return { label: "Expired", color: "expired" };
+    if (daysLeft <= 7) return { label: `Expiring in ${daysLeft} days`, color: "urgent" };
+    if (daysLeft <= 30) return { label: `Expires in ${daysLeft} days`, color: "warning" };
+    return { label: `Valid (${daysLeft} days left)`, color: "active" };
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background text-foreground p-6">
-      <motion.h1
-        className="text-4xl font-extrabold text-center mb-10 tracking-tight"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        📦 Digital Warranty Tracker
-      </motion.h1>
-
-      {/* Error Message */}
-      {error && (
-        <p className="text-center text-destructive font-semibold mb-6">
-          {error}
-        </p>
-      )}
+    <div className="app-container">
+      <h1 className="app-title">📦 Digital Warranty Tracker</h1>
 
       {/* Warranty Form */}
-      <Card className="max-w-3xl mx-auto shadow-xl border rounded-2xl mb-10">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            {editingId ? "✏️ Edit Warranty" : "➕ Add New Warranty"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Product Name
-              </label>
-              <Input
-                type="text"
-                placeholder="Ex: iPhone 15"
-                value={form.product_name}
-                onChange={(e) =>
-                  setForm({ ...form, product_name: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Purchase Date
-              </label>
-              <Input
-                type="date"
-                value={form.purchase_date}
-                onChange={(e) =>
-                  setForm({ ...form, purchase_date: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Expiry Date
-              </label>
-              <Input
-                type="date"
-                value={form.expiry_date}
-                onChange={(e) =>
-                  setForm({ ...form, expiry_date: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block mb-1 text-sm font-medium">
-                Vendor
-              </label>
-              <Input
-                type="text"
-                placeholder="Ex: Amazon"
-                value={form.vendor}
-                onChange={(e) => setForm({ ...form, vendor: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="flex gap-3 col-span-2 justify-center mt-4">
-              <Button type="submit" className="rounded-xl px-6">
-                {editingId ? "Update Warranty" : "Add Warranty"}
-              </Button>
-              {editingId && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setForm({
-                      product_name: "",
-                      purchase_date: "",
-                      expiry_date: "",
-                      vendor: "",
-                    })
-                    setEditingId(null)
-                  }}
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Warranty List */}
-      <h2 className="text-2xl font-bold text-center mb-6">
-        📑 All Warranties
-      </h2>
-
-      {loading ? (
-        <p className="text-center text-muted-foreground">
-          Loading warranties...
-        </p>
-      ) : warranties.length === 0 ? (
-        <p className="text-center text-muted-foreground">
-          No warranties found.
-        </p>
-      ) : (
-        <div className="overflow-x-auto max-w-6xl mx-auto rounded-xl border border-border shadow-md">
-          <table className="w-full text-sm">
-            <thead className="bg-muted sticky top-0 z-10">
-              <tr>
-                <th className="p-3 text-left">ID</th>
-                <th className="p-3 text-left">Product</th>
-                <th className="p-3 text-left">Purchase Date</th>
-                <th className="p-3 text-left">Expiry Date</th>
-                <th className="p-3 text-left">Vendor</th>
-                <th className="p-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {warranties.map((w, index) => (
-                <motion.tr
-                  key={w.id}
-                  className={`transition-colors ${
-                    index % 2 === 0 ? "bg-background" : "bg-muted/30"
-                  } hover:bg-accent hover:text-accent-foreground`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <td className="p-3">{w.id}</td>
-                  <td className="p-3 font-medium">{w.product_name}</td>
-                  <td className="p-3">{w.purchase_date}</td>
-                  <td className="p-3">{w.expiry_date}</td>
-                  <td className="p-3">{w.vendor}</td>
-                  <td className="p-3 flex gap-2 justify-center">
-                    <Button size="sm" onClick={() => handleEdit(w)}>
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(w.id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="card form-card">
+        <h2 className="section-title">{editingId ? "✏️ Update Warranty" : "➕ Add New Warranty"}</h2>
+        <div className="form-grid">
+          <input
+            type="text"
+            placeholder="Product Name (Ex: iPhone 15)"
+            value={newWarranty.product_name}
+            onChange={(e) => setNewWarranty({ ...newWarranty, product_name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Vendor (Ex: Amazon)"
+            value={newWarranty.vendor}
+            onChange={(e) => setNewWarranty({ ...newWarranty, vendor: e.target.value })}
+          />
+          <input
+            type="date"
+            value={newWarranty.purchase_date}
+            onChange={(e) => setNewWarranty({ ...newWarranty, purchase_date: e.target.value })}
+          />
+          <input
+            type="date"
+            value={newWarranty.expiry_date}
+            onChange={(e) => setNewWarranty({ ...newWarranty, expiry_date: e.target.value })}
+          />
         </div>
-      )}
+        <button className="btn primary" onClick={handleAddOrUpdateWarranty}>
+          {editingId ? "Update Warranty" : "Add Warranty"}
+        </button>
+      </div>
+      {/* Dashboard Reminders */}
+<div className="card reminder-card">
+  <h2 className="section-title">🔔 Warranty Reminders</h2>
+
+  {/* Expiring Soon */}
+  <div>
+    <h3>⏳ Expiring Soon</h3>
+    {warranties.filter(
+      (w) => new Date(w.expiry_date) > new Date() &&
+             new Date(w.expiry_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    ).length > 0 ? (
+      warranties
+        .filter(
+          (w) => new Date(w.expiry_date) > new Date() &&
+                 new Date(w.expiry_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        )
+        .map((w) => (
+          <p key={w.id}>⚠️ {w.product_name} (expires {format(new Date(w.expiry_date), "dd MMM yyyy")})</p>
+        ))
+    ) : (
+      <p>No warranties expiring soon 🎉</p>
+    )}
+  </div>
+
+  <hr />
+
+  {/* Expired */}
+  <div>
+    <h3>❌ Expired</h3>
+    {warranties.filter((w) => new Date(w.expiry_date) < new Date()).length > 0 ? (
+      warranties
+        .filter((w) => new Date(w.expiry_date) < new Date())
+        .map((w) => (
+          <p key={w.id}>❌ {w.product_name} (expired {format(new Date(w.expiry_date), "dd MMM yyyy")})</p>
+        ))
+    ) : (
+      <p>All warranties are valid ✅</p>
+    )}
+  </div>
+</div>
+
+      {/* All Warranties */}
+      <h2 className="section-title">📑 All Warranties</h2>
+      <div className="warranty-list">
+        {warranties.map((warranty) => {
+          const status = getExpiryStatus(warranty.expiry_date);
+
+          return (
+            <div className="card warranty-card" key={warranty.id}>
+              <div className="card-header">
+                <h3>{warranty.product_name}</h3>
+                <span className={`badge ${status.color}`}>{status.label}</span>
+              </div>
+
+              <div className="card-body">
+                <p><strong>Vendor:</strong> {warranty.vendor}</p>
+                <p><strong>Purchase:</strong> {format(new Date(warranty.purchase_date), "dd MMM yyyy")}</p>
+                <p><strong>Expiry:</strong> {format(new Date(warranty.expiry_date), "dd MMM yyyy")}</p>
+              </div>
+
+              <div className="btn-group">
+                <button className="btn secondary" onClick={() => handleEdit(warranty)}>Edit</button>
+                <button className="btn danger" onClick={() => handleDelete(warranty.id)}>Delete</button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

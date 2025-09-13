@@ -1,42 +1,339 @@
+/* Root App Container */
 #root {
-  max-width: 1280px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
+  text-align: center;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
+  color: #333;
+  min-height: 100vh;
+}
+
+/* App Title */
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeIn 1s ease;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  color: #444;
+  animation: fadeInUp 0.6s ease;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  padding: 1.75rem;
+  margin: 1rem 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   text-align: left;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Warranty Cards */
+.warranty-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #222;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Inputs */
+input {
+  display: block;
+  width: 100%;
+  padding: 0.85rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #fafafa;
+  font-size: 1rem;
+  transition: 0.2s;
 }
 
+input:focus {
+  outline: none;
+  border-color: #6a11cb;
+  box-shadow: 0 0 6px rgba(106, 17, 203, 0.3);
+  background: #fff;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.7rem 1.4rem;
+  margin: 0.3rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+}
+.btn.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+}
+
+.btn.secondary {
+  background: #f1f1f1;
+  color: #333;
+}
+.btn.secondary:hover {
+  background: #e2e2e2;
+}
+
+.btn.danger {
+  background: linear-gradient(90deg, #ff512f, #dd2476);
+  color: white;
+  box-shadow: 0 4px 15px rgba(221, 36, 118, 0.3);
+}
+.btn.danger:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(221, 36, 118, 0.5);
+}
+
+/* Home Page */
+.home-container {
+  text-align: center;
+  padding: 5rem 2rem;
+  animation: fadeIn 1s ease;
+}
+
+.home-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #ff512f, #dd2476);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.home-subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.home-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 5px 18px rgba(37, 117, 252, 0.35);
+}
+
+.home-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(37, 117, 252, 0.5);
+}
+
+/* Warranty List */
+.warranty-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== Global Light Theme ========== */
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f9f9fb;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.app-title {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+/* ========== Section Titles ========== */
+.section-title {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #34495e;
+  border-left: 4px solid #4a90e2;
+  padding-left: 10px;
+}
+
+/* ========== Cards ========== */
 .card {
-  padding: 2em;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.read-the-docs {
-  color: #888;
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.form-card {
+  border-left: 4px solid #4a90e2;
+}
+
+/* ========== Form Styling ========== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+input[type="text"],
+input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #4a90e2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.3);
+}
+
+/* ========== Warranty Cards ========== */
+.warranty-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.warranty-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.warranty-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* ========== Badges ========== */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.badge.active {
+  background: #2ecc71;
+}
+
+.badge.warning {
+  background: #f39c12;
+}
+
+.badge.urgent {
+  background: #e67e22;
+}
+
+.badge.expired {
+  background: #e74c3c;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.btn.primary:hover {
+  background: #357ab8;
+}
+
+.btn.secondary {
+  background: #f1f2f6;
+  color: #2c3e50;
+  border: 1px solid #dcdde1;
+}
+
+.btn.secondary:hover {
+  background: #e3e4e8;
+}
+
+.btn.danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn.danger:hover {
+  background: #c0392b;
+}
+
+/* ========== Layout ========== */
+.warranty-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
 }

@@ -1,24 +1,28 @@
 @tailwind base;
-
-@custom-variant dark (&:is(.dark *));
 @tailwind components;
 @tailwind utilities;
 
-/* Optional custom overrides */
+/* Custom variant for dark mode using Tailwind’s recommended syntax */
+@custom-variant dark (&:is(.dark *));
+
+/* Root variables for light and dark themes */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #111;
+  background: #f9fafb;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
   --radius: 0.625rem;
+
+  /* Light theme colors using OKLCH color space */
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -52,6 +56,7 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
+/* Links */
 a {
   font-weight: 500;
   color: #646cff;
@@ -61,25 +66,30 @@ a:hover {
   color: #535bf2;
 }
 
+/* Body styles using Tailwind @apply */
 body {
   @apply bg-gray-50 text-gray-900 min-h-screen;
 }
 
+/* Heading 1 styling */
 h1 {
   @apply text-4xl font-bold leading-tight;
 }
 
+/* Button base styling */
 button {
   @apply rounded-xl px-4 py-2 font-medium transition-colors
-         bg-blue-600 text-white hover:bg-blue-700 focus:outline-none
-         focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+    bg-blue-600 text-white hover:bg-blue-700 focus:outline-none
+    focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
 }
 
+/* Theme inline variables for easy refactoring */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -113,6 +123,7 @@ button {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Dark mode overrides */
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -147,6 +158,7 @@ button {
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+/* Base layer utilities */
 @layer base {
   * {
     @apply border-border outline-ring/50;
