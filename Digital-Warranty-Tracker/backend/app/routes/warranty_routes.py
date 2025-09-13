@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.extensions import db
 from app.models.warranty import Warranty
+from datetime import datetime
 
 # ✅ Consistent blueprint name + URL prefix
 warranties_bp = Blueprint("warranties", __name__, url_prefix="/api/warranties")
@@ -15,21 +16,18 @@ def get_warranties():
 @warranties_bp.route("/", methods=["POST"])
 def add_warranty():
     data = request.get_json()
-    print("Incoming JSON:", data)  # ✅ Debug log
-
-    if not data:
-        return jsonify({"error": "No JSON received"}), 400
 
     new_warranty = Warranty(
         product_name=data.get("product_name", ""),
-        purchase_date=data.get("purchase_date", ""),
+        purchase_date=datetime.strptime(data.get("purchase_date"), "%Y-%m-%d").date(),
+        expiry_date=datetime.strptime(data.get("expiry_date"), "%Y-%m-%d").date(),
         vendor=data.get("vendor", ""),
-        expiry_date=data.get("expiry_date", ""),  # keep for consistency
     )
     db.session.add(new_warranty)
     db.session.commit()
 
     return jsonify(new_warranty.to_dict()), 201
+
 
 # ➤ Update warranty
 @warranties_bp.route("/<int:id>", methods=["PUT"])
@@ -38,12 +36,15 @@ def update_warranty(id):
     data = request.get_json()
 
     warranty.product_name = data.get("product_name", warranty.product_name)
-    warranty.purchase_date = data.get("purchase_date", warranty.purchase_date)
-    warranty.expiry_date = data.get("expiry_date", warranty.expiry_date)    
+    if "purchase_date" in data:
+        warranty.purchase_date = datetime.strptime(data["purchase_date"], "%Y-%m-%d").date()
+    if "expiry_date" in data:
+        warranty.expiry_date = datetime.strptime(data["expiry_date"], "%Y-%m-%d").date()
     warranty.vendor = data.get("vendor", warranty.vendor)
 
     db.session.commit()
     return jsonify(warranty.to_dict())
+
 
 # ➤ Delete warranty
 @warranties_bp.route("/<int:id>", methods=["DELETE"])
