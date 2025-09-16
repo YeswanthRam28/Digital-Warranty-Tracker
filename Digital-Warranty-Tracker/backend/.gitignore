@@ -18,3 +18,11 @@ env/
 
 # Logs
 *.log
+
+serviceAccountKey.json
+*.env
+*.key
+*.pem
+
+firebase-adminsdk.json
+*.json
